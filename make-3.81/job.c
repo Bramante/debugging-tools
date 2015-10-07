@@ -2073,6 +2073,32 @@ exec_command (char **argv, char **envp)
 
 # else
 
+  char* makeLogFileName = getenv("MAKE_LOG_FILE_NAME");
+  if( makeLogFileName )
+    {
+     int i ;
+     FILE * fh = NULL ;
+     fh = fopen( makeLogFileName, "a" );
+     if(fh)
+       {
+        fprintf(fh,"[*][argv] ");
+        for(i=0;argv[i]!=NULL;i++)
+           {
+            fprintf(fh,"%s ",argv[i]);
+           }
+        fprintf(fh,"\n");
+        fprintf(fh,"[*][envp] ");
+        for(i=0;envp[i]!=NULL;i++)
+           {
+            fprintf(fh,"%s ",envp[i]);
+           }
+        fprintf(fh,"\n");
+        fflush(fh);
+        fsync(fileno(fh));
+        fclose(fh);
+       }
+   }
+
   /* Run the program.  */
   environ = envp;
   execvp (argv[0], argv);
